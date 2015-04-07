@@ -1635,7 +1635,9 @@ List absences or events in a specific time period accross specific group or the 
         
 # Group Blogs
 
-## Query blogs [/api/v2/blogs_v2?gid={gid}&cid={cid}&limit={limit}&page={page}&sort={sort}&reverse={reverse}]
+Endpoint describing the blog module
+
+## Blogs [/api/v2/blogs_v2?gid={gid}&cid={cid}&limit={limit}&page={page}&sort={sort}&reverse={reverse}]
 
 + Parameters
     + gid (optional, int, `1`) ... The group id from which we would like to fetch the blogs.
@@ -1656,7 +1658,7 @@ List absences or events in a specific time period accross specific group or the 
             + `0`
             + `1`
 
-### Query [GET]
+### Index [GET]
 + Response 200 (application/json)
         
         {
@@ -1693,7 +1695,7 @@ List absences or events in a specific time period accross specific group or the 
 
 Fetch the blog categorries.
 
-### Fetch [GET]
+### Index [GET]
 + Response 200 (application/json)
 
         [
@@ -1708,7 +1710,7 @@ Fetch the blog categorries.
         ]
         
         
-# Group Gallery
+# Group Galleries
 Endpoint describing the gallery module
 
 ##Galleries [/api/gallery?image_format={image_format}]
@@ -1753,14 +1755,14 @@ Images will always be provided in a 16:9 format. We can provide different sizes 
                 "images": ['1', '54']
             }
 
-### Retrieve all [GET]
+### Index [GET]
 + Response 200
 
     [Galleries][]
 
 
 ## Gallery [/api/gallery/{nid}/images?image_format={image_format}]
-A single gallery object.
+A detailed view of one gallery.
 
 ##List of attributes:
 
@@ -1797,7 +1799,7 @@ Images will always be provided in a 16:9 format. We can provide different sizes 
                 "image_nids": [27749]
             }
 
-### Retrieve single [GET]
+### Retrieve [GET]
 + Response 200
 
     [Gallery][]
