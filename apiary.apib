@@ -1,0 +1,1708 @@
+FORMAT: 1A
+
+# ChurchDesk Drupal API
+Welcome to *ChurchDesk Drupal API* Api
+This API supports the following:
++ Request going back and forth between our central data server CD5.
++ Requests from our Angular frontend
+
+##Allowed HTTPs requests:
+
+- `POST` - To create a resource
+- `PUT` - To  update a resource
+- `GET` - Get a resource or list of resources
+- `DELETE` - To delete resource
+
+##Server Responses
+
+- 200 `OK` - the request was successful (some API calls may return 201 instead).
+- 201 `Created` - the request was successful and a resource was created.
+- 204 `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
+- 400 `Bad Request` - the request could not be understood or was missing required parameters.
+- 401 `Unauthorized` - authentication failed or user doesn't have permissions for requested operation.
+- 403 `Forbidden` - access denied.
+- 404 `Not Found` - resource was not found.
+- 405 `Method Not Allowed` - requested method is not supported for resource.
+- 429 `Too Many Requests` - exceeded KirkeWeb API limits. Pause requests, wait up to one minute, and try again.
+
+##Encoding
+
+All endpoints accept and use UTF-8 encoding
+
+##Dates
+
+All dates will be in ISO-8601 format in UTC timezone.
+
+##Allowed image formats
+- `span4_16-9` - Dimentions: 300 x 169
+- `span5_16-9` - Dimentions: 380 x 214
+- `squared_80` - Dimentions: 80 x 80
+- `span9_16-9` - Dimentions: 700 x 394
+- `9-16`       - Dimentions: 1080 x 1920
+
+
+# Group System
+Endpoints that provide system wide functionality like X-CSRF-Token authentication
+
+##  X-CSRF-Token Token [/services/session/token]
+Use to retrieve the X-CSRF-Token to use later with other requests.
+
+### Retrieve Access Token [GET]
++ Response 200 
+    + Body
+    
+            'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+
+# Group Church
+## Index [/api/v2/church?image_format={image_format}]
+    Get the data about the church.
+
+### Index [GET]
+##List of church attributes:
+- name - (string) the church name.
+- email - (string) the church contact email.
+- phone - (string) the church contact phone.
+- address - (string) the church location.
+- picture - (array) a url to the image of the church in different types
+
+
++ Parameters
+    + image_format (optional, string, `span5_16-9,span4_16-9`) ... String `image_format` might have different multiple format. The default format: span4_16-9.
+
++ Request (application/x-www-form-urlencoded)
++ Response 200
+
+        {
+            'name': 'Church of every single day',
+            'email': 'every@singleday.com',
+            'phone': '99 88 77 66',
+            'address': '666 Heaven avenue',
+            'picture': 'http://www.churchdesk.com/wp-content/uploads/2015/02/churchdesk_light_h1.png',
+        }
+
+## Update [/api/v2/church/{uid}]
+
+### Update [PUT]
++ Parameters
+    + uid (int) ... The uid of the user who is changing the church settings.
+    
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                {
+                    'name': 'Church of every single day',
+                    'email': 'every@singleday.com',
+                    'phone': '99 88 77 66',
+                    'address': '666 Heaven avenue',
+                    'pictureId': 11,
+                }
+            }
+            
++ Response 200
+    + Body
+    
+            {
+                'success': true
+            }
+   
+   
+# Group User
+
+
+##List of Login Attributes:
+- username - (string) the username of the user, normally it is an email
+- password - (string) the user password
+
+
+##List of Login specific response attributes:
+They are added to the user attributed of the user performing the login, refere to the example.
+- sessid - (string) the authentication cookie name
+- session_name - (string) the authentication cookie value
+- csrf_token - (string) CSFR token, should be sent along with all post, put and delete requests.
+
+## Index [/api/v2/user_v2]
+List users.
+
+
+##List of attributes:
+
+- id - (int) the user unique identifier
+- site - (string) the site url with the protocol without an ending slash.
+- name - (string) the user real name.
+- mail - (string) the mail of the user
+- status - (string) Wheter the user has been blocked or is active. 1=active.
+- loggedIn - (boolean) Wheter the user is online or not. Note that this has a 20 min inaccuracy.
+- roles - (array) List of role ids the user has been assigned
+- groups - (array) List of group ids
+- picture - (string) A url to the user picture, always set.
+- latestLogin - (int) The unix time for the last time the user logged in.
+- administerUser - (boolean) Wheter the user is an user administrator.
+
+### List users [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 2,
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Matthias Haamann',
+                'picture': 'http://goo.gl/JLM3TB', 
+                'status': '1',
+                'latestSession': null,
+                'roles': '9,10',
+                'groups': ['2'],
+                'latestLogin': '1426681158',
+                'administerUser': true
+            },
+            {
+                'id': 7,
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'TD Presson',
+                'picture': 'http://goo.gl/JLM3TB',
+                'status': '0',
+                'latestSession': null,
+                'roles': '9,8',
+                'groups': ['2', '3'],
+                'latestLogin': '1426681156',
+                'administerUser': true
+            },
+            {
+                'id': 34,
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Kim Yong',
+                'picture': 'http://goo.gl/JLM3TB',
+                'status': '1',
+                'latestSession': null,
+                'roles': null,
+                'groups': ['2'],
+                'latestLogin': '1426681856',
+                'administerUser': true
+            }
+        ]
+        
+
+## Retrieve & update [/api/v2/user_v2/{user_id}]
+Get the current user and update him
+
+##List of user attributes:
+- id - (int) the user unique identifier
+- site - (string) the site url with the protocol without an ending slash.
+- name - (string) the user real name.
+- picture - (string) a url to the user picture, always set.
+- initials - (string) initials to represent him at his company.
+- job - (string) his job title.
+- phone - (string) a contact phone.
+- onboarded - (array) key value pairs array of onboarded data. 
+- attendanceEnabled - (bool) to check if the notification module is enabled.
+- permissions - (array) permission that the user can create message, events and can do double booking.
+
++ Parameters
+    + user_id (integer) ... *user_id* the id of the user to update, in retrieving the current user you can just send -1
+
+
+
+### Retrieve [GET]
++ Response 200 (application/json)
+
+            {
+                'userId': '34',
+                'site': 'http://vesterbrosogn.dk',
+                'siteName': 'Vesterbro Sogn',
+                'name': 'Kim Yong',
+                'firstName': 'Kim',
+                'lastName': 'Yong'
+                'picture': 'http://goo.gl/JLM3TB',
+                'initials': 'KY',
+                'job': 'Assistant',
+                'phone': {
+                    'country': 'dk',
+                    'number': 42424242,
+                },
+                'onboarded':{
+                                'key1': 'value1',
+                                'key2': 'value2'
+                            },
+                'attendanceEnabled': true,
+                'permissions': {
+                                    'canCreateEvent': true,
+                                    'canCreateMessage': true,
+                                    'canDoubleBooking': true,
+                                }
+            }
+            
+### Update [PUT]
++ Request (application/x-www-form-urlencoded)
+    + Body
+    
+            {
+                'firstName': 'kim',
+                'lastName': 'yong',
+                'pass': '$S$DwCOnu7KLUy.Vm.i2bO0DRssIXULlQkMf8xilsG4tMQVweAiMt4m',
+                'pictureId': 123,
+                'initials': 'ky',
+                'job': 'prayer',
+                'phone': {
+                    'country' : 'dk',
+                    'number': '01 02 03 04',
+                },
+            }
+            
++ Response 204 (application/json)
+
+
+## Login [/api/v2/user_v2/login]
+Login user to the system.
+
+### Login [POST]
++ Request (application/x-www-form-urlencoded)
+    + Body
+    
+            {
+                'username': 'kim@gmail.com',
+                'password': 'Kim55isAwesome',
+            }
+            
++ Response 200
+
+        {
+            'id': '34',
+            'name': 'Kim Yong',
+            'picture': 'http://goo.gl/JLM3TB',
+            'sessid': 'vqjD1bnnRvIg84hfdnJut9vTrROmT1vyKeiJZX6IMmI',
+            'session_name': 'SESS260d2d4a36f92024f1e05bd1b219c70a',
+            'csrf_token': 'Tu-mEMA_jfwkCdNOL24ryGizFoxI6WDWlAdrRvoZXe4'
+        }
+   
+
+## Logout [/api/v2/user_v2/logout]
+Logout user from the system.
+
+
+### Logout [POST]
++ Request (application/x-www-form-urlencoded)
+
++ Response 200
+
+
+## Password Reset [/api/v2/user_v2/password_reset]
+You have to check for the boolean 'true' in result to know that the email was sent.
+
+### Password Reset [POST]
++ Request (application/x-www-form-urlencoded)
+ 
+   + Body
+    
+            {
+                'username': 'kim@gmail.com',
+            }
+            
++ Response 200
+    
+        [true]
+
+## Access Token [/api/v2/user_v2/access-token/{mail}/{cipher}]
+Genereate/Refresh user access token, access token can authorize uesrs without session cookies. the token width is always 40 characters.
+
+
++ Parameters
+    + mail (string) ... *mail* The mail of the user to create the access token for.
+    + cipher (string) ... *cipher* the md5 of the user password salt (only kirkeweb services have access to this).
+
+### Generate [POST]
++ Request (application/x-www-form-urlencoded)
+            
++ Response 200
+    
+        [90fce20b6a909492a882b2b7fefb7d69462ad611]
+
+##Onboarding [/api/v2/user_v2/{uid}/onboarding]
+Endpoint will deal with all onboarding procedure. 
+Get the onboarding details for the specific user and create or update the onboarding details.
+
+### GET [GET]
++ Parameters
+    + uid (optional, int) ... *uid* the id of the user onboarding data is requesting. By default: it is current user.
++ Response 200 (application/json)
+
+        [
+            {
+                'key' : 'value',
+                'key2' : 'value2'
+                'key3' : {
+                    'sub_key1': 'test'
+                }
+            }
+        ]
+
+### Create/Update [POST]
++ Parameters
+    + uid (optional, int) ... *uid* the id of the user onboarding data is requesting. By default: it is current user.
+
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'key1': 'value1',
+                'setup': 'value2',
+                'navigation': '2014-05-06',
+            }
+
++ Response 200 (application/json)
+
+        [
+            {}
+        ]
+
+# Group Groups
+    
+## Index [/api/v2/group_v2]
+List church groups.
+
+## List of attributes:
+
+- id - (int) the id of the group.
+- name - (string) the name of the group.
+- members - (array) a list of (int) user ids representing the members of the group.
+- picture - (string) a url to the group picture. This can be empty if no group picture has been defined.
+
+### Index [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 13, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Menighedsråd',
+            },
+            {
+                'id': 18, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Medarbejdere',
+            }
+        ]
+   
+
+# Group Dictionaries
+Endpoints that provides different types of dictionaries
+
+
+##Absence categories [/api/v2/absence-category]
+List absence categories.
+
+##List of attributes:
+
+- id - (int) the id of the category
+- name - (string) the name of the category
+- color - (string) the category color in hex format *#ffffff*
+
+### List absence categories [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 11, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Ferie',
+                'color': '#dd5c3a' 
+            },
+            {
+                'id': 13, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Friweekend',
+                'color': '#b05623' 
+            },
+            {
+                'id': 15, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Barns første sygedag',
+                'color': '#af583f' 
+            },
+            
+        ]
+        
+
+##Event categories [/api/v2/event-category]
+List event categories.
+
+##List of attributes:
+
+- id - (int) the id of the category
+- name - (string) the name of the category
+- color - (string) the category color in hex format *#ffffff*
+
+### List event categories [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 11, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Børnegudstjeneste',
+                'color': '#dd5c3a' 
+            },
+            {
+                'id': 13, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Gudstjeneste',
+                'color': '#b05623' 
+            },
+            {
+                'id': 15, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Vielse',
+                'color': '#af583f' 
+            },
+            
+        ]
+        
+        
+        
+        
+##Roles [/api/v2/roles]
+List system roles.
+
+##List of attributes:
+
+- id - (int) the id of the role
+- name - (string) the name of the role. Not translated.
+
+### Index [GET]
++ Response 200 (application/json)
+
+        [{
+          'id': 13,
+          'name': 'absence and workplan'
+        }, {
+          'id': 6,
+          'name': 'all events'
+        }, {
+          'id': 8,
+          'name': 'allow double booking'
+        }, {
+          'id': 1,
+          'name': 'anonymous user'
+        }, {
+          'id': 2,
+          'name': 'authenticated user'
+        }, {
+          'id': 9,
+          'name': 'booking'
+        }, {
+          'id': 3,
+          'name': 'graveyard admin'
+        }, {
+          'id': 4,
+          'name': 'graveyard employee'
+        }, {
+          'id': 5,
+          'name': 'homepage'
+        }, {
+          'id': 10,
+          'name': 'newsletter'
+        }, {
+          'id': 7,
+          'name': 'publish'
+        }, {
+          'id': 12,
+          'name': 'sensitive information'
+        }, {
+          'id': 11,
+          'name': 'user administrator'
+        }, {
+          'id': 14,
+          'name': 'view all absence'
+        }]
+
+
+##Resources [/api/v2/resource]
+List church resources.
+
+##List of attributes:
+
+- id - (int) the id of the category
+- name - (string) the name of the resource
+- color - (string) the resource color in hex format *#ffffff*
+
+### List resources [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 13, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Kirkehuset',
+                'color': '#dd5c3a' 
+            },
+            {
+                'id': 18, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Hvidbjerg plejecente',
+                'color': '#b05623' 
+            },
+            {
+                'id': 65, 
+                'site': 'http://vesterbrosogn.dk',
+                'name': 'Store sal',
+                'color': '#af583f' 
+            },
+            
+        ]
+        
+
+##Dictionary [/api/v2/dictionaries]
+List church resources.
+
+aggergates resources, groups, categories, users
+
+### Aggregate resources [GET]
++ Response 200 (application/json)
+
+        {
+            'resource': [
+                {
+                    'id': 15,
+                    'name': 'Großer Saal',
+                    'color': '#FFB61E',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 16,
+                    'name': 'Computer',
+                    'color': '#BDC3C7',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 17,
+                    'name': 'Beamer',
+                    'color': '#BDC3C7',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 18,
+                    'name': 'Kamera',
+                    'color': '#BDC3C7',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 19,
+                    'name': 'Diktiergerät',
+                    'color': '#BDC3C7',
+                    'site': 'http://cd4.dev'
+                }
+            ],
+            'groups': [
+                {
+                    'id': 3,
+                    'name': 'Kirchengemeinderat',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 155,
+                    'name': 'test',
+                    'site': 'http://cd4.dev'
+                }
+            ],
+            'categories': [
+                {
+                    'id': 15,
+                    'name': 'Konfirmanden',
+                    'color': '#22A7F0',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 14,
+                    'name': 'Konzert',
+                    'color': '#22A7F0',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 10,
+                    'name': 'Nachmittagsbesprechung',
+                    'color': '#22A7F0',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 11,
+                    'name': 'Vortrag',
+                    'color': '#22A7F0',
+                    'site': 'http://cd4.dev'
+                }
+            ]
+            'users': [
+                {
+                    'id': 6,
+                    'name': 'Jens Holm Hansen',
+                    'picture': '',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 33,
+                    'name': 'Obad Magdy',
+                    'picture': '',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 34,
+                    'name': 'Misgina Teklahaimanot',
+                    'picture': '',
+                    'site': 'http://cd4.dev'
+                },
+                {
+                    'id': 37,
+                    'name': 'Viktoras Svolka',
+                    'picture': '',
+                    'site': 'http://cd4.dev'
+                }
+            ]
+        }
+        
+# Group Holy Days
+Query for holy days in a specific year, localized per country.
+
+We will just find the user country and send the correct localized data.
+
+
+##List of attributes:
+
+- startDate - (string) ISO-8601 date format.
+- endDate - (string) ISO-8601 date format.
+- title - (string) name (not always set)
+
+
+## Query Holydays [/api/v2/holydays/{year}]
+Get the list of hollydays in the specified date ranges.
+
++ Parameters
+    + year (int) ... *year* the year to fetch holidays from.
+    
+### Query [GET]
++ Response 200 (application/json)
+
+        [
+            { 
+                'name': 'Juleaftensdag',
+                'startDate': '2015-12-24T00:00:00Z',
+                'endDate': '2015-12-25T00:00:00Z'
+            },
+            { 
+                'name': 'Juledag',
+                'startDate': '2015-12-25T00:00:00Z',
+                'endDate': '2015-12-26T00:00:00Z'
+            },
+            { 
+                'name': '2. Juledag',
+                'startDate': '2015-12-26T00:00:00Z',
+                'endDate': '2015-12-27T00:00:00Z'
+            },
+            { 
+                'name': 'Nytårsaften',
+                'startDate': '2015-12-31T00:00:00Z',
+                'endDate': '2016-01-01T00:00:00Z'
+            }
+        ]
+        
+# Group Message
+
+##List of attributes::
+- id - (int) the message id.
+- site - (string) the site url with the protocol without an ending slash.
+- authorId - (int) the author user id.
+- groupId - (int) the group id.
+- change - (string)  ISO-8601 format of the message last change date.
+- lastCommentAuthorId - (int) the id of the user who last commented on the message (can be empty)
+- lastCommentDate - (string) ISO-8601 time string of the last response to the message (can be empty)
+- commentCount - (int) number of comments.
+- title - (string) the message title.
+- messageLine - (string) first line of the last comment, first line of the message.
+- lastActivity - (string) the date of the last activity on this message (last comment or the last modification date to the message itself).
+- read - (boolean) has the message been read by the current user.
+- canEdit - (boolean) can the current user edit this message.
+- canDelete - (boolean) can the current user delete this message
+
+## Create [/api/v2/message_v2]
+Use this endpoint to create a message
+
+### Create [POST]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'groupId': 4,
+                'title': 'Merry Christmas',
+                'body': 'Merry christmas everyone.',
+            }
+            
++ Response 201
+    + Body
+    
+            {
+                'id': 95,
+                'site': 'http://vesterbrosogn.dk',
+                'type': 'group_message'
+            }
+
+## Index [/api/v2/message_v2?start_date={start_date}&limit={limit}&query={query}&services_token={services_token}]
+Use this endpoint to list all id in the system or in a specific group.
+
++ Parameters
+    + start_date (string) ... *start_date* a time point to retrieve messages from, send now for the latest messages or the time of the last message in the last page.
+    + limit (int) ...*limit* (optional) the number of items per page to send back (default to 20).
+    + query (string) ... *query* (optional) string to search with among other messages, it will look at message title, body and comments.
+    + services_token (string) ... *services_token* (optional) the access token you obtained you don't need to send this if you have session cookie, remember to send the csrf token when using session.
+
+
+### Index [GET]
++ Response 200 (application/json)
+
+        [ 
+            {
+                'id': 95,
+                'site': 'http://vesterbrosogn.dk',
+                'authorId': 7,
+                'groupId': 4,
+                'changed': '2014-08-15T15:52:01+0000',
+                'lastCommentAuthorId': 1,
+                'lastCommentDate': '2014-08-15T15:52:01+0000',
+                'commentCount': 7,
+                'title': 'Merry Christmas',
+                'lastActivity':  '2014-08-15T15:52:01+0000'
+                'messageLine': 'You guys know about the christimas dinner at Jens's',
+                'read': false,
+                'canEdit': true,
+                'canDelete': true
+            },
+            {
+                'id': 6,
+                'site': 'http://vesterbrosogn.dk',
+                'authorId': 7,
+                'groupId': 5,
+                'created': '2014-08-15T15:52:01+0000',
+                'lastCommentAuthorId': 7,
+                'lastCommentDate': '2014-08-15T15:52:01+0000',
+                'commentCount': 0,
+                'title': 'Christams dinner'
+                'messageLine': 'you are all invited to dinner at Jens's place'
+                'read': false,
+                'canEdit': false,
+                'canDelete': false
+            },
+            {
+                'id': 22,
+                'site': 'http://vesterbrosogn.dk',
+                'authorId': 7,
+                'groupId': 4,
+                'changed': '2014-08-15T15:52:01+0000',
+                'lastCommentAuthorId': 1,
+                'lastCommentDate': '2014-08-15T15:52:01+0000',
+                'commentCount': 7,
+                'title': 'Merry Christmas',
+                'lastActivity':  '2014-08-15T15:52:01+0000'
+                'messageLine': 'We are out of toilet paper, AGAIN!',
+                'read': false,
+                'canEdit': true,
+                'canDelete': true
+            },
+        ]
+        
+
+## Unread Messages [/api/v2/unread-messages?services_token={services_token}]
+Use this endpoint to list latest 20 unread messages.
+
++ Parameters
+    + services_token (string) ... *services_token* (optional) the access token you obtained, you don't need to send this if you have session cookie, remember to send the csrf token when using session.
+
+
+### Index [GET]
++ Response 200 (application/json)
+
+        [ 
+            {
+                'id': 95,
+                'site': 'http://vesterbrosogn.dk',
+                'authorId': 7,
+                'groupId': 4,
+                'changed': '2014-08-15T15:52:01+0000',
+                'lastCommentAuthorId': 1,
+                'lastCommentDate': '2014-08-15T15:52:01+0000',
+                'commentCount': 7,
+                'title': 'Merry Christmas',
+                'lastActivity':  '2014-08-15T15:52:01+0000'
+                'messageLine': 'You guys know about the christimas dinner at Jens's',
+                'read': false,
+                'canEdit': true,
+                'canDelete': true
+            },
+            {
+                'id': 6,
+                'site': 'http://vesterbrosogn.dk',
+                'authorId': 7,
+                'groupId': 5,
+                'created': '2014-08-15T15:52:01+0000',
+                'lastCommentAuthorId': 7,
+                'lastCommentDate': '2014-08-15T15:52:01+0000',
+                'commentCount': 0,
+                'title': 'Christams dinner'
+                'messageLine': 'you are all invited to dinner at Jens's place'
+                'read': false,
+                'canEdit': false,
+                'canDelete': false
+            },
+        ]
+        
+ 
+        
+## GET, Update & Delete [/api/v2/message_v2/{message_id}]
+Update a message or delete one
+
++ Parameters
+    + message_id (int) ... *message_id* the id of the message to update.
+
+### Retrieve [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 172,
+                'site': 'http://cd4.dev',
+                'authorId': 1,
+                'groupId': 4,
+                'changed': '2015-02-24T16:14:56+01:00',
+                'lastCommentAuthorId': 1,
+                'lastCommentDate': '2015-02-24T16:15:07+01:00',
+                'commentCount': 3,
+                'title': 'Outing wednesday',
+                'body': 'Anyone up for cinema next wednesday after work?',
+                'comments': [
+                    {
+                        'id': 12,
+                        'site': 'http://cd4.dev',
+                        'authorId': 1,
+                        'authorName': '',
+                        'created': '2015-02-24T17:01:03+01:00',
+                        'targetId': 172,
+                        'body': 'I'm',
+                        'canEdit': false,
+                        'canDelete': false
+                    },
+                    {
+                        'id': 11,
+                        'site': 'http://cd4.dev',
+                        'authorId': 1,
+                        'authorName': '',
+                        'created': '2015-02-24T16:43:08+01:00',
+                        'targetId': 172,
+                        'body': 'Sorry, I can't go, I have plans with my girlfriend.',
+                        'canEdit': false,
+                        'canDelete': false
+                    },
+                ],
+                'read': true,
+                'canEdit': true,
+                'canDelete': true
+            }
+        ]
+    
+
+### Update [PUT]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'groupId': 4,
+                'title': 'Merry Christmas',
+                'body': 'Merry christmas everyone. Enjoy the vacation',
+            }
+            
++ Response 204
+
+        
+### Delete [DELETE]
++ Request (application/x-www-form-urlencoded)
+    + Header
+    
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
++ Response 204
+
+
+## Mark Read [/api/v2/message_v2/{message_id}/mark-as-read]
+Mark message as read
+
++ Parameters
+    + message_id (int) ... *message_id* the id of the message to update.
+
+### Mark [POST]
++ Response 200 (application/json)
+
+# Group Comments
+## List of Attributes.
+- id - (int) comment id.
+- site - (string) the site url with the protocol without an ending slash.
+- authorId - (int) the author user id.
+- authorName - (String) the authorname if he was anonmoys (authorId was 0)
+- created - (string)  ISO-8601 format.
+- targetId - (int) the id of the element you are posting this comment to.
+- body - (string) the comment body
+- canEdit - (boolean) can the current user edit this comment
+- canDelete - (boolean) can the current user delete this comment
+
+## Create [/api/v2/comment_v2?services_token={services_token}]
+Create comments
+
++ Parameters
+    + services_token (string) ... *services_token* (optional) the access token you obtained you don't need to send this if you have session cookie, remember to send the csrf token when using session.
+
+### Create [POST]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'body': 'We need to buy new toilet papers',
+                'targetId': 10539
+            }
+            
++ Response 200
+    + Body
+    
+            {
+                'id': 5009,
+                'site': 'vesterbro.kw01.net',
+                'type': 'comment'
+            }
+        
+
+## Update, Delete [/api/v2/comment_v2/{comment_id}?services_token={services_token}]
+Get single absence details, update an absence or delete one
+
++ Parameters
+    + comment_id (int) ... *comment_id* the id of the comment.
+    + services_token (string) ... *services_token* (optional) the access token you obtained you don't need to send this if you have session cookie, remember to send the csrf token when using session.
+    
+
+### Update [PUT]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'body': 'We need to buy new toilet papers and towels',
+            }
+            
++ Response 204
+ 
+
+### Delete [DELETE]
++ Request (application/x-www-form-urlencoded)
+    + Header
+    
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
++ Response 204
+
+
+# Group Absence
+
+## List of Attributes.
+- id - (int) absence id.
+- authorId - (int) the author user id.
+- groupId - (int) the group id (required).
+- created - (string)  ISO-8601 format of the absence create date.
+- substitute - (string) the initials of the substitute user (optional).
+- title - (string) the absence title, generated on the server from the user, substitute and the absence fields.
+- user - (int) the id of the use which this absence is for (required).
+- absenceCategoryId - (int) id of the absence cateogry type (required).
+- allDay - (boolean) is the event all day
+- start - (string) the start date as  ISO-8601 format in UTC timezone
+- end - (string) the end date as  ISO-8601 format in UTC timezone
+- canEdit - (boolean) can the current user edit this absence.
+- canDelete - (boolean) can the current user delete this absence
+
+## Create [/api/v2/absence]
+Create absence
+
+### Create [POST]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'groupId': 4,
+                'substitute': 'AM',
+                'user': 7,
+                'absenceCategoryId': 7,
+                'allDay': false,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate': '2014-08-16T15:52:01+0000',
+            }
+            
++ Response 200
+    + Body
+    
+            {
+                'id': 5009,
+                'authorId': 7,
+                'groupId': 4,
+                'created': '2014-08-15T15:52:01+0000',
+                'substitute': 'AM',
+                'title': 'AH Afspadsering (Sub:AM)'
+                'user': 7
+                'absenceCategoryId': 7,
+                'allDay': false,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate': '2014-08-16T15:52:01+0000',
+                'canEdit': true,
+                'canDelete': true
+            }
+
+        
+## Get, Update & Delete [/api/v2/absence/{absence_id}]
+Get single absence details, update an absence or delete one
+
++ Parameters
+    + absence_id (int) ... *absence_id* the id of the absence.
+    
+
+### Update [PUT]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'groupId': 4,
+                'substitute': 'BC',
+                'user': 7,
+                'absenceCategoryId': 7,
+                'allDay': 0,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate': '2014-08-16T15:52:01+0000',
+            }
+            
++ Response 200
+    + Body
+    
+            {
+                'id': 5009,
+                'authorId': 7,
+                'groupId': 4,
+                'created': '2014-08-15T15:52:01+0000',
+                'substitute': 'BC',
+                'title': 'AH Afspadsering (Sub:BC)'
+                'user': 7
+                'absenceCategoryId': 7,
+                'allDay': false,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate': '2014-08-16T15:52:01+0000',
+                'canEdit': true,
+                'canDelete': true
+            }
+
+
+### Absence details [GET]
++ Response 200 (application/json)
+
+            {
+                'id': 5009,
+                'authorId': 7,
+                'groupId': 4,
+                'created': '2014-08-15T15:52:01+0000',
+                'substitute': 'BC',
+                'title': 'AH Afspadsering (Sub:BC)'
+                'user': 7
+                'absenceCategoryId': 7,
+                'allDay': false,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate': '2014-08-16T15:52:01+0000',
+                'canEdit': false,
+                'canDelete': false
+            }
+        
+### Delete [DELETE]
++ Response 204
+
+
+# Group Event
+
+## Listing attributes (Used in Calendar and My-Events Endpoints).
+- id - (int) the item id, this can be an absence or an event.
+- site - (string) the site url with the protocol without an ending slash.
+- title - (string) item title
+- type - (string) string can be { event | absence }
+- published - (boolean) is the item published
+- allDay - (boolean) is the event all day
+- start - (string) the start date in  ISO-8601 format in UTC timezone
+- end - (string) the end date in  ISO-8601 format in UTC timezone
+- icons - (array) list of icon names ??? { repeated, all-approved, web}
+- users - (array) list of users ids .. use the user endpoint to get detailed user information
+- resources - (array) list of resource ids .. use /api/v2/resource
+- eventCategories - (array) list of categories this event belong to
+
+## Detailed attributes (Used in Retrieve Endpoint).
+- id - (int) event id.
+- site - (string) the site url with the protocol without an ending slash.
+- authorId - (int) the author user id.
+- groupId - (int) the group id (required).
+- created - (string)  ISO-8601 format of the event create date.
+- publish - (boolean) if the event is published or not
+- picture - (string) the image of this event, can be empty
+- title - (string) the event title (required)
+- eventCategories - (array) list of categories this event belong to.
+- allDay - (boolean) is the event all day
+- startDate - (string) the start date in ISO-8601 format in UTC timezone
+- endDate - (string) the end date in ISO-8601 format in UTC timezone
+- resources - (array) list of ids  of the booked resources by this event
+- users - (array) list of ids  of the booked users by this event
+- description - (string) the description of this event, HTML string.
+- internalNote - (string) the internal note of the event, HTML string.
+- location: (string) the location of the event.
+- person: (string) a name of the contributer to the event
+- price: (string) the event price.
+- comments - (array) all comment respones for this event, will always be sent empty in the create response.
+- canEdit - (boolean) can the current user edit this event.
+- canDelete - (boolean) can the current user delete this event
+
+## Create [/api/v2/event]
+Create and List events
+
+### Create [POST]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'groupId': 17,
+                'title': ''Lakering af sale',
+                'allDay': false,
+                'allowDoubleBooking': false,
+                'endDate': 1426463000,
+                'startDate': 1426377700,
+                'publish': true,
+                'resources': [
+                  2203,
+                  2209,
+                  2205,
+                  2208
+                ],
+                'users':  [
+                  6,
+                  22,
+                  118,
+                  48
+                ],
+                'location': 'Church HQ',
+                'price': '50 dkk',
+                'person': 'Viktoras Svolka',
+                'description': 'Some random event description',
+                'internalNote': 'We shoudl discuss this ASAP',
+                'eventCategories': [
+                    1379, 
+                    2342
+                ]
+            }
+            
+            
++ Response 200
+    + Body
+    
+            {
+                'id': 1432,
+                'site': 'http://vesterbrosogn.dk',
+                'type': 'event',
+            }
+            
+
+        
+## Get, Update & Delete [/api/v2/event/{eventId}]
+Get single event details, update an event or delete one
+
++ Parameters
+    + eventId (int) ... *eventId* the id of the event.
+    
+
+### Update [PUT]
++ Request (application/x-www-form-urlencoded)
+    + Header
+
+             'Content-Type': 'application/x-www-form-urlencoded'
+             'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+            
+    + Body
+    
+            {
+                'groupId': 17,
+                'title': ''Lakering af sale',
+                'allDay': false,
+                'allowDoubleBooking': false,
+                'endDate': 1426463000,
+                'startDate': 1426377700,
+                'publish': true,
+                'resources': [
+                  2203,
+                  2209,
+                ],
+                'users': [
+                  7,
+                  22,
+                  118,
+                  48
+                ],
+                'location': 'Church HQ',
+                'price': '60 dkk',
+                'person': 'Viktoras Svolka',
+                'description': 'Some random event description',
+                'internalNote': 'We *SHOULD* discuss this ASAP',
+                'eventCategories': [1379,2342]
+            }
+            
++ Response 204
+
+
+### event details [GET]
++ Response 200 (application/json)
+
+            {
+                'id': 17825,
+                'site': 'http://vesterbrosogn.dk',
+                'authorId': 1,
+                'groupId': 17,
+                'created': 1420035763,
+                'publish': true,
+                'title': '\'Lakering af sale',
+                'eventCategories': [1379,2342]
+                'allDay': false,
+                'startDate': 1426370400,
+                'endDate': 1426456800,
+                'picture': 'http://churchofindia-cipbc.webs.com/A%20decorated%20and%20newly%20painted%20Christ%20Church%20at%20Lucknow%20-%202.jpg',
+                'resources': [
+                    2203,
+                    2209
+                ],
+                'users': [
+                    7,
+                    22,
+                    118,
+                    48
+                ],
+                'description': 'Some random event description',
+                'internalNote': 'We *SHOULD* discuss this ASAP',
+                'location': 'Church HQ',
+                'price': '60 dkk',
+                'person': 'Viktoras Svolka',
+                'comments': [],
+                'canEdit': true,
+                'canDelete': true,
+                'attendenceStatus': [
+                    {
+                        'user': 7,
+                        'status': 1
+                    },
+                    {
+                        'user': 22,
+                        'status': 2
+                    },
+                    {
+                        'user': 118,
+                        'status': 3
+                    },
+                    {
+                        'user': 48,
+                        'status': 0
+                    }
+                ]
+            },
+        
+### Delete [DELETE]
++ Response 204
+
+## Query Events [/api/v1/events/{from}/{to}?services_token={services_token}]
+List all events current user has access to in a specific time period, will return a maximum of 200 events starting from the *from* param
+
+
+## Event listing attributes.
+- id - (int) event id.
+- title - (string) the event title.
+- eventCategories - (array) list of categories this event belong to
+- allDay - (boolean) is the event all day.
+- startDate - (string) the start date in ISO-8601 format.
+- endDate - (string) the end date in ISO-8601 format.
+- users - (array) list of ids  of the booked users by this event
+- location: (string) the location of the event.
+
+
++ Parameters
+    + from (string) ... *from* the query start time in ISO-8601
+    + to (string) ... *to* the query end time in ISO-8601
+    + services_token (string) ... *services_token* the access token generated for a user using his hashed password.
+
+
+    
+### Retrieve Data [GET]
++ Response 200 (application/json)
+
+             [
+                {
+                    'id': 10135,
+                    'site': 'http://vesterbro.kw01.net',
+                    'title': 'Højmesse',
+                    'allDay': true,
+                    'startDate': '2014-08-15T15:52:01+0000',
+                    'endDate':'2014-08-17T15:52:01+0000',
+                    'location': 'Kirke HQ',
+                    'users': [ 3, 87],
+                    'eventCategories': [90],
+                },
+                {
+                    'id': 9947,
+                    'site': 'http://vesterbro.kw01.net',
+                    'title': 'Konfirmandforberedelse TMR',
+                    'allDay': true,
+                    'startDate': '2014-08-15T15:52:01+0000',
+                    'endDate':'2014-08-17T15:52:01+0000',
+                    'location': '',
+                    'users': [ 7, 93 ],
+                    'eventCategories': [90],
+                },
+                {
+                    'id': 231,
+                    'site': 'http://aarhusvorfrue.dk',
+                    'title': 'Babysalmesang - tre hold',
+                    'allDay': true,
+                    'startDate': '2014-08-15T15:52:01+0000',
+                    'endDate':'2014-08-17T15:52:01+0000',
+                    'location': '',
+                    'users': [ 3, 87],
+                    'eventCategories': [90],
+                },
+                {
+                    'id': 22,
+                    'site': 'http://aarhusvorfrue.dk',
+                    'title': 'Rengøring',
+                    'allDay': true,
+                    'startDate': '2014-08-15T15:52:01+0000',
+                    'endDate':'2014-08-17T15:52:01+0000',
+                    'location': 'Store Sale',
+                    'users': [ 7, 93 ],
+                    'eventCategories': [90],
+                },
+                {
+                    'id': 231,
+                    'site': 'http://hado.kw01.net',
+                    'title': 'Babysalmesang - tre hold',
+                    'allDay': true,
+                    'startDate': '2014-08-15T15:52:01+0000',
+                    'endDate':'2014-08-17T15:52:01+0000',
+                    'location': '',
+                    'users': [ 3, 87],
+                    'eventCategories': [90],
+                },
+                {
+                    'id': 22,
+                    'site': 'http://hado.kw01.net',
+                    'title': 'Rengøring',
+                    'allDay': true,
+                    'startDate': '2014-08-15T15:52:01+0000',
+                    'endDate':'2014-08-17T15:52:01+0000',
+                    'location': 'Store Sale',
+                    'users': [ 7, 93 ],
+                    'eventCategories': [90],
+                }
+            ]
+
+## My Events [/api/v2/my-events]
+List the upcoming 30 events current user created or booked to.
+
+- id - (int) the item id, this can be an absence or an event.
+- site - (string) the site url with the protocol without an ending slash.
+- title - (string) item title
+- type - (string) string can be { event | absence }
+- published - (boolean) is the item published
+- allDay - (boolean) is the event all day
+- start - (string) the start date in  ISO-8601 format in UTC timezone
+- end - (string) the end date in  ISO-8601 format in UTC timezone
+- icons - (array) list of icon names ??? { repeated, all-approved, web}
+- users - (array) list of users ids .. use the user endpoint to get detailed user information
+- resources - (array) list of resource ids .. use /api/v2/resource
+- eventCategories - (array) list of categories this event belong to
+
+### My Events [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 10135, 
+                'site': 'http://vesterbrosogn.dk',
+                'title': 'Højmesse',
+                'type': 'event'
+                'allDay': true,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate':'2014-08-17T15:52:01+0000',
+                'icons': ['repeated', 'all-approved',
+                'users': [ 3, 87],
+                'resources': [44],
+                'eventCategories': [90],
+            },
+            {
+                'id': 9947, 
+                'site': 'http://vesterbrosogn.dk',
+                'title': 'Konfirmandforberedelse TMR',
+                'type': 'event'
+                'allDay': true,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate':'2014-08-17T15:52:01+0000',
+                'icons': ['all-approved', 'web'],
+                'users': [ 7, 93 ],
+                'resources': [],
+                'eventCategories': [90],
+            },
+        ]
+
+
+# Group Notifications
+Endpoints that list current user notifications.
+
+##List of attributes:
+
+- id - (int) the notification id.
+- timestamp - (int) unix timestamp of the notification date.
+- response - (int) (int) can be one of 4 values { 0 => NO_ANSWER, 1 => YES, 2 => NO, 3 => MAY_BE }
+- event - (array) the event related to this notification (listing attributes)
+
+
+## List [/api/v2/my-invites]
+List all future notifications from this point in time.
+
+### Retrieve Data [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 132,
+                'site': 'http://aarhusvorfrue.dk',
+                'title': 'Morgenandagt',
+                'eventCategoryId': 1627,
+                'allDay': false,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate':'2014-08-17T15:52:01+0000',
+                'changed': '2014-08-13T12:52:01+0000',
+                'location': 'Kirkeweb HQ',
+                'response': 1,
+                'invitedBy': 24,
+            },
+            {
+                'id': 1098,
+                'site': 'http://hado.kw01.net',
+                'title': 'Højmesse',
+                'eventCategoryId': 32,
+                'allDay': false,
+                'startDate': '2014-09-15T15:52:01+0000',
+                'endDate':'2014-09-17T15:52:01+0000',
+                'changed': '2014-05-13T12:52:01+0000',
+                'location': '',
+                'response': 0,
+                'invitedBy': 12,
+            }
+        ]
+        
+        
+## Respond [/api/v2/event_v2/attendance/{event_id}/{response}]
+Update your response for a specific event notification.
+
++ Parameters
+    + event_id (int) ... *event_id* the id of the event.
+    + response (int) ... the user response.
+
+### Respond [POST]
++ Request (application/x-www-form-urlencoded)
+    + Header
+    
+            'X-CSRF-Token': 'Fh1I5djzKSGyGGgy0m9fxog2wwiyElwKKF3-l_Wh8-s'
+
++ Response 200 (application/json)
+
+
+
+
+
+
+# Group Calendar
+Endpoints that list calendar events.
+
+##List of attributes:
+
+- id - (int) the item id, this can be an absence or an event.
+- title - (string) item title
+- type - (string) string can be { event | absence }
+- published - (boolean) is the item published
+- allDay - (boolean) is the event all day
+- start - (string) the start date in  ISO-8601 format in UTC timezone
+- end - (string) the end date in  ISO-8601 format in UTC timezone
+- icons - (array) list of icon names ??? { repeated, all-approved, web}
+- users - (array) list of users ids .. use the user endpoint to get detailed user information
+- resources - (array) list of resource ids .. use /api/v2/resource
+- absenceCategoryId - (int) only if the type is absence ...  use the absence-category endpoint to get detailed information
+- eventCategoryId - (int) only if the type is event ...  use the event-category endpoint to get detailed information
+
+## Query Events [/api/v2/calendar/{from}/{to}/{group_id}]
+List absences or events in a specific time period accross specific group or the whole system.. You should do the more detailed queries locally like filtering by booked users or resources ... etc.
+
++ Parameters
+    + from (string) ... *from* the query start time in unixtimestamp
+    + to (string) ... *to* the query end time in unixtimestamp
+    + group_id (int) ... *group_id* Optional, the id of the group to fetch events and absences from, if not passed, all events within from-to will come back.
+
+### Retrieve Data [GET]
++ Response 200 (application/json)
+
+        [
+            {
+                'id': 9662, 
+                'title': 'KK Fast fridag'
+                'type': 'absence',
+                'allDay': true,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate': '2014-08-17T15:52:01+0000',
+                'icons': ['repeated',
+                'users': [ 3 ],
+                'resources': [],
+                'absenceCategoryId': 98,
+            },
+            {
+                'id': 10135, 
+                'title': 'Højmesse',
+                'type': 'event'
+                'allDay': true,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate':'2014-08-17T15:52:01+0000',
+                'icons': ['repeated', 'all-approved',
+                'users': [ 3, 87],
+                'resources': [44],
+                'eventCategoryId': 90,
+            },
+            {
+                'id': 9947, 
+                'title': 'Konfirmandforberedelse TMR',
+                'type': 'event'
+                'allDay': true,
+                'startDate': '2014-08-15T15:52:01+0000',
+                'endDate':'2014-08-17T15:52:01+0000',
+                'icons': ['all-approved', 'web'],
+                'users': [ 7, 93 ],
+                'resources': [],
+                'eventCategoryId': 90,
+            },
+        ]
+        
+# Group Blogs
+
+## Query blogs [/api/v2/blogs_v2?gid={gid}&cid={cid}&limit={limit}&page={page}&sort={sort}&reverse={reverse}]
+
++ Parameters
+    + gid (optional, int, `1`) ... The group id from which we would like to fetch the blogs.
+    + cid (optional, array) ... The array list of the categories, which the fetched blogs supose to have.
+    + limit = `10` (optional, int, `15`) ... The number represents how many posts per page to show.
+    + page (optional, int)
+        Value used for pagination. Based on how many post to show per page, it generates the pages.
+    + sort = `created` (optional, string, `created`)
+        Sort key value.
+        + Values
+            + `title`
+            + `created`
+            + `author`
+            + `category`
+            + `status`
+    + reverse = `0` (optional, int) ... Identifies if sort of the results requires reverse sorting.
+        + Values
+            + `0`
+            + `1`
+
+### Query [GET]
++ Response 200 (application/json)
+        
+        {
+            blogs: [
+            {
+                id: 1,
+                title: 'Churchdesk blog',
+                body: 'Blog body lorem ipsum'
+                created: '1426671750',
+                gid: 2,
+                groupName: 'Test group',
+                picture: null,
+                author: 'Churchdesk administrator'
+                authorId: 12,
+                replies: 10,
+                categories: [
+                    {
+                        tid: 12, 
+                        name: 'Churchdesk category 1'
+                    },
+                    {
+                        tid: 13, 
+                        name: 'Churchdesk category 2'
+                    }
+                ]
+            }
+            ],
+            totals: {
+                'blogs': 322,
+            }
+        }
+
+## Categories [/api/v2/blogs_v2//categories]
+
+Fetch the blog categorries.
+
+### Fetch [GET]
++ Response 200 (application/json)
+
+        [
+            {
+            name: 'Churchdesk category',
+            tid: '20'
+            },
+            {
+            name: 'Unsorted',
+            tid: '2'
+            }
+        ]
