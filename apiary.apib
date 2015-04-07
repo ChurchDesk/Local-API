@@ -1706,3 +1706,76 @@ Fetch the blog categorries.
             tid: '2'
             }
         ]
+        
+        
+# Group Gallery
+Endpoint describing the gallery module
+
+##Galleries [/api/gallery?image_format={image_format}]
+List of all galleries.
+
+##List of attributes:
+
+- nid - (int) Gallery ID
+- title - (string) Gallery title
+- coverImage - (string) Url to the cover image of the gallery
+
+Images will always be provided in a 16:9 format. We can provide different sizes using this format.
+
++ Parameters
+    + image_format (optional, string, `span5_16-9`) ... String `image_format` can get different coverImage size. The default format: span4_16-9.
+   
+
++ Model (application/json)
+
+    + Body
+
+            {
+                "nid": "42",
+                "title": "Images of Christmas eve",
+                "coverImage": 'http://goo.gl/JLM3TB'
+            },
+            {
+                "nid": "47",
+                "title": "Images of Easter event",
+                "coverImage": 'http://goo.gl/span5_16-9/JLM3TB'
+            }
+
+### Retrieve all [GET]
++ Response 200
+
+    [Galleries][]
+
+
+## Gallery [/api/gallery/{nid}/images?image_format={image_format}]
+A single gallery object.
+
+##List of attributes:
+
+- created - (ISO 8601) Date of gallery creation. Using the date format *ISO 8601*.
+- title - (string) Gallery title
+- images - (array) Array of images, see example for structure.
+
+Images will always be provided in a 16:9 format. We can provide different sizes using this format.
+
++ Parameters
+    + nid (int) ... The id of the gallery.
+    + image_format (optional, string, `span5_16-9`) ... String `image_format` can get different coverImage size. The default format: span4_16-9.
+
++ Model (application/json)
+
+    + Body
+
+            {
+                "created": "2004-02-12T15:19:21+00:00",
+                "title": "Images of Christmas eve"
+                "images": [
+                    {'thumbnail': 'http://goo.gl/JLM3TB'},
+                    {'thumbnail': 'http://goo.gl/JLM3TB'},
+                ]
+            }
+
+### Retrieve single [GET]
++ Response 200
+
+    [Gallery][]
