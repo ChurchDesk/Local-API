@@ -1764,7 +1764,6 @@ A single gallery object.
 
 ##List of attributes:
 
-- created - (ISO 8601) Date of gallery creation. Using the date format *ISO 8601*.
 - title - (string) Gallery title
 - images - (array) Array of images, see example for structure.
 
@@ -1779,12 +1778,22 @@ Images will always be provided in a 16:9 format. We can provide different sizes 
     + Body
 
             {
-                "created": "2004-02-12T15:19:21+00:00",
-                "title": "Images of Christmas eve"
+                "nid": 432,
+                "title": "Images of Christmas eve",
+                "uid": 43,
+                "realname": 'Test user 2',
                 "images": [
-                    {'thumbnail': 'http://goo.gl/JLM3TB'},
-                    {'thumbnail': 'http://goo.gl/JLM3TB'},
-                ]
+                    {
+                        nid: "27749",
+                        title: "6564g.JPG",
+                        created: "1415653485",
+                        uid: "3",
+                        uri: "s3://6564g.JPG",
+                        filemime: "image/jpeg",
+                        thumbnail: "http://goo.gl/JLM3TB"
+                    },
+                ],
+                "image_nids": [27749]
             }
 
 ### Retrieve single [GET]
