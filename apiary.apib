@@ -112,7 +112,7 @@ Use to retrieve the X-CSRF-Token to use later with other requests.
             }
    
    
-# Group User
+# Group Users
 
 
 ##List of Login Attributes:
@@ -144,7 +144,7 @@ List users.
 - latestLogin - (int) The unix time for the last time the user logged in.
 - administerUser - (boolean) Wheter the user is an user administrator.
 
-### List users [GET]
+### Index [GET]
 + Response 200 (application/json)
 
         [
@@ -187,7 +187,7 @@ List users.
         ]
         
 
-## Retrieve & update [/api/v2/user_v2/{user_id}]
+## Retrieve & Update [/api/v2/user_v2/{user_id}]
 Get the current user and update him
 
 ##List of user attributes:
@@ -668,7 +668,7 @@ aggergates resources, groups, categories, users
         }
         
 # Group Holy Days
-Query for holy days in a specific year, localized per country.
+Collection of all holy days in a specific year, localized per country.
 
 We will just find the user country and send the correct localized data.
 
@@ -680,11 +680,11 @@ We will just find the user country and send the correct localized data.
 - title - (string) name (not always set)
 
 
-## Query Holydays [/api/v2/holydays/{year}]
+## Index [/api/v2/holydays/{year}]
 Get the list of hollydays in the specified date ranges.
 
 + Parameters
-    + year (int) ... *year* the year to fetch holidays from.
+    + year (int) ... *year* the year to fetch holy days from.
     
 ### Query [GET]
 + Response 200 (application/json)
@@ -712,7 +712,7 @@ Get the list of hollydays in the specified date ranges.
             }
         ]
         
-# Group Message
+# Group Messages
 
 ##List of attributes::
 - id - (int) the message id.
@@ -1030,7 +1030,7 @@ Get single absence details, update an absence or delete one
 + Response 204
 
 
-# Group Absence
+# Group Absences
 
 ## List of Attributes.
 - id - (int) absence id.
@@ -1048,7 +1048,6 @@ Get single absence details, update an absence or delete one
 - canDelete - (boolean) can the current user delete this absence
 
 ## Create [/api/v2/absence]
-Create absence
 
 ### Create [POST]
 + Request (application/x-www-form-urlencoded)
@@ -1088,15 +1087,14 @@ Create absence
                 'canDelete': true
             }
 
-        
-## Get, Update & Delete [/api/v2/absence/{absence_id}]
+
+## Retrive, Update & Delete [/api/v2/absence/{absence_id}]
 Get single absence details, update an absence or delete one
 
 + Parameters
     + absence_id (int) ... *absence_id* the id of the absence.
-    
 
-### Update [PUT]
+## Update [PUT]
 + Request (application/x-www-form-urlencoded)
     + Header
 
@@ -1135,7 +1133,7 @@ Get single absence details, update an absence or delete one
             }
 
 
-### Absence details [GET]
+### Retrieve [GET]
 + Response 200 (application/json)
 
             {
@@ -1153,12 +1151,13 @@ Get single absence details, update an absence or delete one
                 'canEdit': false,
                 'canDelete': false
             }
-        
+ 
+
 ### Delete [DELETE]
 + Response 204
 
 
-# Group Event
+# Group Events
 
 ## Listing attributes (Used in Calendar and My-Events Endpoints).
 - id - (int) the item id, this can be an absence or an event.
@@ -1199,7 +1198,7 @@ Get single absence details, update an absence or delete one
 - canDelete - (boolean) can the current user delete this event
 
 ## Create [/api/v2/event]
-Create and List events
+Create event
 
 ### Create [POST]
 + Request (application/x-www-form-urlencoded)
@@ -1253,7 +1252,7 @@ Create and List events
             
 
         
-## Get, Update & Delete [/api/v2/event/{eventId}]
+## Retrieve, Update & Delete [/api/v2/event/{eventId}]
 Get single event details, update an event or delete one
 
 + Parameters
@@ -1298,7 +1297,7 @@ Get single event details, update an event or delete one
 + Response 204
 
 
-### event details [GET]
+### Retrieve [GET]
 + Response 200 (application/json)
 
             {
@@ -1355,7 +1354,7 @@ Get single event details, update an event or delete one
 ### Delete [DELETE]
 + Response 204
 
-## Query Events [/api/v1/events/{from}/{to}?services_token={services_token}]
+## Index [/api/v1/events/{from}/{to}?services_token={services_token}]
 List all events current user has access to in a specific time period, will return a maximum of 200 events starting from the *from* param
 
 
@@ -1377,7 +1376,7 @@ List all events current user has access to in a specific time period, will retur
 
 
     
-### Retrieve Data [GET]
+### Index [GET]
 + Response 200 (application/json)
 
              [
@@ -1509,10 +1508,10 @@ Endpoints that list current user notifications.
 - event - (array) the event related to this notification (listing attributes)
 
 
-## List [/api/v2/my-invites]
+## Index [/api/v2/my-invites]
 List all future notifications from this point in time.
 
-### Retrieve Data [GET]
+### Index [GET]
 + Response 200 (application/json)
 
         [
@@ -1545,14 +1544,14 @@ List all future notifications from this point in time.
         ]
         
         
-## Respond [/api/v2/event_v2/attendance/{event_id}/{response}]
+## Update [/api/v2/event_v2/attendance/{event_id}/{response}]
 Update your response for a specific event notification.
 
 + Parameters
     + event_id (int) ... *event_id* the id of the event.
     + response (int) ... the user response.
 
-### Respond [POST]
+### Update [POST]
 + Request (application/x-www-form-urlencoded)
     + Header
     
@@ -1637,7 +1636,7 @@ List absences or events in a specific time period accross specific group or the 
 
 Endpoint describing the blog module
 
-## Blogs [/api/v2/blogs_v2?gid={gid}&cid={cid}&limit={limit}&page={page}&sort={sort}&reverse={reverse}]
+## Index [/api/v2/blogs_v2?gid={gid}&cid={cid}&limit={limit}&page={page}&sort={sort}&reverse={reverse}]
 
 + Parameters
     + gid (optional, int, `1`) ... The group id from which we would like to fetch the blogs.
