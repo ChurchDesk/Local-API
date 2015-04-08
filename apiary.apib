@@ -1720,7 +1720,12 @@ List of all galleries.
 - nid - (int) Gallery ID
 - title - (string) Gallery title
 - coverImage - (string) Url to the cover image of the gallery
-
+- created - (int) The timestamp when the gallery was created.
+- uid - (int) The id of the user.
+- realname - (string) The name of the user who created the gallery.
+- url - (string) The url of the gallery.
+- no_images - (int) Number of the images in the gallery.
+- images - (array) The list of images ids in the gallery.
 Images will always be provided in a 16:9 format. We can provide different sizes using this format.
 
 + Parameters
@@ -1768,6 +1773,9 @@ A detailed view of one gallery.
 - nid - (int) Gallery id.
 - title - (string) Gallery title
 - images - (array) Array of images, see example for structure.
+- uid - (int) the id of the user who created the gallery.
+- realname - (string) the name of the user who created the gallery.
+- image_nids (array) the array of the all images ids in the gallery.
 
 Images will always be provided in a 16:9 format. We can provide different sizes using this format.
 
