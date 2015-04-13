@@ -1637,6 +1637,23 @@ List absences or events in a specific time period accross specific group or the 
 Endpoint describing the blog module
 
 ## Index [/api/v2/blogs_v2?gid={gid}&cid={cid}&limit={limit}&page={page}&sort={sort}&reverse={reverse}]
+Endpoint to list all the blogs.
+
+##List of attributes:
+
+- id - (int) the id of the blog.
+- title - (string) the title of the blog.
+- body - (string) the blog content.
+- created - (int) timestamp, when the blog was created.
+- gid - (int) the group id which this blog belongs to.
+- groupName - (string) the actual name of the group.
+- picture - (string) the url to the blog picture.
+- author - (string) the name of the blog author.
+- authorId - (int) the id of the user author.
+- replies - (int) the count how many comments are submitted for the blog.
+- categories - (array) the list of the categories.
+- status - (int) represent blog status, published or not.
+
 
 + Parameters
     + gid (optional, int, `1`) ... The group id from which we would like to fetch the blogs.
@@ -1673,6 +1690,7 @@ Endpoint describing the blog module
                 author: 'Churchdesk administrator'
                 authorId: 12,
                 replies: 10,
+                status: 1,
                 categories: [
                     {
                         tid: 12, 
