@@ -191,17 +191,24 @@ List users.
 Get the current user and update him
 
 ##List of user attributes:
-- id - (int) the user unique identifier
+- id - (int) the user unique identifier.
 - site - (string) the site url with the protocol without an ending slash.
 - name - (string) the user real name.
+- mail - (string) the mail of the user.
 - picture - (string) a url to the user picture, always set.
 - initials - (string) initials to represent him at his company.
+- status - (string) Whether the user has been blocked or is active. 1=active.
+- phone - (object) key value pairs of country code and phone number.
 - job - (string) his job title.
 - changesSeen - (int) ammount of product changes read by the user.
 - phone - (string) a contact phone.
 - onboarded - (array) key value pairs array of onboarded data. 
 - attendanceEnabled - (bool) to check if the notification module is enabled.
 - permissions - (array) permission that the user can create message, events and can do double booking.
+- loggedIn - (boolean) Whether the user is online or not. Note that this has a 20 min inaccuracy.
+- latestLogin - (int) The unix time for the last time the user logged in.
+- groups - (array) List of group ids.
+- roles - (array) List of role ids the user has been assigned.
 
 + Parameters
     + user_id (integer) ... *user_id* the id of the user to update, in retrieving the current user you can just send -1
